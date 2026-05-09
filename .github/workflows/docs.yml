@@ -26,7 +26,7 @@ jobs:
             [ -e "$f" ] || continue
             # Skip s_full and appendices for now — they're allowed to differ.
             case "$f" in
-              *appendix*|*s_full*) continue ;;
+              *appendix*|*s_full*|*multi-model*) continue ;;
             esac
             if ! grep -qE '^## Upstream Source Reading|^## 上游源码阅读' "$f"; then
               echo "::error file=$f::missing 'Upstream Source Reading / 上游源码阅读' section"

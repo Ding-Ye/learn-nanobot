@@ -31,9 +31,9 @@ Pedagogy borrowed from [shareAI-lab/learn-claude-code](https://github.com/shareA
 | s09 | [Hook system](./docs/en/s09-hooks.md) | 5 lifecycle points + CompositeHook | ✅ |
 | s10 | [Consolidator + AutoCompact](./docs/en/s10-consolidator-autocompact.md) | LLM-summarize + TTL background compact | ✅ |
 | s11 | [TurnState state machine](./docs/en/s11-turn-state-machine.md) | RESTORE→COMPACT→COMMAND→BUILD→RUN→SAVE→RESPOND→DONE | ✅ |
-| s_full | End-to-end integration | 16-step execution trace + deliberate-omissions table | ⏳ |
-| A | Appendix · Memory as interpretation | append-only → Dream → curated MEMORY.md | ⏳ |
-| B | Appendix · Upstream source-reading map | file→chapter map + 5 extension exercises | ⏳ |
+| s_full | [End-to-end integration](./docs/en/s_full-integration.md) | 16-step execution trace + deliberate-omissions table | ✅ |
+| A | [Appendix · Memory as interpretation](./docs/en/appendix-a-memory-as-interpretation.md) | append-only → Dream → curated MEMORY.md | ✅ |
+| B | [Appendix · Upstream source-reading map](./docs/en/appendix-b-upstream-map.md) | file→chapter map + 5 extension exercises | ✅ |
 
 Full plan: [`.learn/plan.md`](./.learn/plan.md).
 
@@ -51,6 +51,27 @@ cd web && npm install && npm run dev
 ```
 
 Requires Go ≥ 1.23 and Node ≥ 20.
+
+### Multi-model support
+
+All 11 sessions ship with an **OpenAI-compatible translator** alongside the native Anthropic provider:
+
+```bash
+cd agents/s01-minimum-loop
+
+# DeepSeek
+export DEEPSEEK_API_KEY=sk-...
+go run . -provider deepseek -v "list .go files"
+
+# Qwen via DashScope
+export DASHSCOPE_API_KEY=sk-...
+go run . -provider qwen "what's the weather like?"
+
+# Self-hosted vLLM/Ollama
+go run . -provider local -base-url http://localhost:8000/v1 -model my-llama "..."
+```
+
+8 profiles work out of the box: `anthropic` / `openai` / `deepseek` / `moonshot` / `qwen` / `groq` / `openrouter` / `local`. See [the multi-model guide](./docs/en/multi-model.md).
 
 ## Layout
 

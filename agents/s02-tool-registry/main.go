@@ -6,21 +6,43 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 )
+
+// providerProfiles mirrors s01's profile menu. Each session re-declares it
+// locally so sessions stay self-contained Go modules with no cross-imports.
+var providerProfiles = map[string]struct {
+	BaseURL string
+	Model   string
+	APIKey  string
+}{
+	"anthropic":  {Model: "claude-sonnet-4-6", APIKey: "ANTHROPIC_API_KEY"},
+	"openai":     {BaseURL: "https://api.openai.com/v1", Model: "gpt-4o-mini", APIKey: "OPENAI_API_KEY"},
+	"deepseek":   {BaseURL: "https://api.deepseek.com/v1", Model: "deepseek-chat", APIKey: "DEEPSEEK_API_KEY"},
+	"moonshot":   {BaseURL: "https://api.moonshot.cn/v1", Model: "moonshot-v1-8k", APIKey: "MOONSHOT_API_KEY"},
+	"qwen":       {BaseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1", Model: "qwen-plus", APIKey: "DASHSCOPE_API_KEY"},
+	"groq":       {BaseURL: "https://api.groq.com/openai/v1", Model: "llama-3.3-70b-versatile", APIKey: "GROQ_API_KEY"},
+	"openrouter": {BaseURL: "https://openrouter.ai/api/v1", Model: "openai/gpt-4o-mini", APIKey: "OPENROUTER_API_KEY"},
+	"local":      {BaseURL: "http://localhost:8000/v1", Model: "local-model", APIKey: "OPENAI_API_KEY"},
+}
 
 func main() {
 	verbose := flag.Bool("v", false, "print every turn (assistant text + tool calls)")
 	maxTurns := flag.Int("max-turns", 20, "max agent turns before giving up")
-	model := flag.String("model", envOr("MODEL", "claude-sonnet-4-6"),
-		"Anthropic model id (default claude-sonnet-4-6)")
+	provider := flag.String("provider", envOr("PROVIDER", "anthropic"),
+		"provider profile: anthropic | openai | deepseek | moonshot | qwen | groq | openrouter | local")
+	baseURL := flag.String("base-url", envOr("BASE_URL", ""),
+		"override the profile's base URL")
+	modelFlag := flag.String("model", envOr("MODEL", ""),
+		"override the profile's default model id")
+
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(),
-			"usage: s02 [-v] [-max-turns N] [-model ID] <prompt>\n\n"+
-				"  ANTHROPIC_API_KEY must be set.\n\n"+
-				"  s02 introduces a Tool Registry. Same outward behavior as s01;\n"+
-				"  internally tool lookup, schema caching, and dispatch all move\n"+
-				"  out of the Loop into Registry.\n")
+			"usage: s02 [-v] [-max-turns N] [-provider P] [-base-url URL] [-model ID] <prompt>\n\n"+
+				"  Same Provider abstraction as s01 (CreateMessage / Anthropic-flat\n"+
+				"  wire format). The Tool Registry is what's new this chapter; the\n"+
+				"  multi-provider plumbing is identical.\n")
 	}
 	flag.Parse()
 
@@ -30,24 +52,42 @@ func main() {
 	}
 	prompt := strings.Join(flag.Args(), " ")
 
-	apiKey := os.Getenv("ANTHROPIC_API_KEY")
+	prof, ok := providerProfiles[*provider]
+	if !ok {
+		log.Fatalf("unknown -provider %q (valid: %s)", *provider, validProviderNames())
+	}
+	apiKey := os.Getenv(prof.APIKey)
 	if apiKey == "" {
-		log.Fatalf("ANTHROPIC_API_KEY is not set")
+		log.Fatalf("%s is not set (required for -provider %s)", prof.APIKey, *provider)
+	}
+	model := *modelFlag
+	if model == "" {
+		model = prof.Model
+	}
+	url := *baseURL
+	if url == "" {
+		url = prof.BaseURL
 	}
 
-	provider := NewAnthropicProvider(apiKey, *model)
+	var p Provider
+	if *provider == "anthropic" {
+		p = NewAnthropicProvider(apiKey, model)
+	} else {
+		p = NewOpenAIProvider(apiKey, url, model)
+	}
+
 	registry := NewRegistry()
 	registry.Register(NewBashTool())
 
 	loop := &Loop{
-		Provider: provider,
+		Provider: p,
 		Tools:    registry,
 		MaxTurns: *maxTurns,
 		Verbose:  *verbose,
 	}
 	if *verbose {
-		fmt.Fprintf(os.Stderr, "[s02] model=%s tools=%d max_turns=%d\n",
-			*model, registry.Len(), *maxTurns)
+		fmt.Fprintf(os.Stderr, "[s02] provider=%s base_url=%q model=%s tools=%d max_turns=%d\n",
+			*provider, url, model, registry.Len(), *maxTurns)
 	}
 
 	final, err := loop.Run(context.Background(), prompt)
@@ -62,4 +102,13 @@ func envOr(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+func validProviderNames() string {
+	names := make([]string, 0, len(providerProfiles))
+	for k := range providerProfiles {
+		names = append(names, k)
+	}
+	sort.Strings(names)
+	return strings.Join(names, ", ")
 }

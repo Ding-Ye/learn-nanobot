@@ -31,9 +31,9 @@
 | s09 | [Hook 系统](./docs/zh/s09-hooks.md) | 5 个生命周期点 + CompositeHook | ✅ |
 | s10 | [Consolidator + AutoCompact](./docs/zh/s10-consolidator-autocompact.md) | LLM 摘要 + TTL 后台压缩 | ✅ |
 | s11 | [TurnState 状态机](./docs/zh/s11-turn-state-machine.md) | RESTORE→COMPACT→COMMAND→BUILD→RUN→SAVE→RESPOND→DONE | ✅ |
-| s_full | 端到端集成 | 16 步执行轨迹 + 故意省略对照 | ⏳ |
-| A | 附录 · 记忆是诠释，不是转录 | append-only → Dream → curated MEMORY.md | ⏳ |
-| B | 附录 · 上游源码导读地图 | 文件→章节映射 + 5 个延伸练习 | ⏳ |
+| s_full | [端到端集成](./docs/zh/s_full-integration.md) | 16 步执行轨迹 + 故意省略对照 | ✅ |
+| A | [附录 · 记忆是诠释，不是转录](./docs/zh/appendix-a-memory-as-interpretation.md) | append-only → Dream → curated MEMORY.md | ✅ |
+| B | [附录 · 上游源码导读地图](./docs/zh/appendix-b-upstream-map.md) | 文件→章节映射 + 5 个延伸练习 | ✅ |
 
 完整规划见 [`.learn/plan.md`](./.learn/plan.md)。
 
@@ -51,6 +51,27 @@ cd web && npm install && npm run dev
 ```
 
 需要 Go ≥ 1.23 和 Node ≥ 20。
+
+### 多模型支持 / Multi-model support
+
+所有 11 个 session 都内置 **OpenAI-compatible 翻译层**，可直接接入国产和开源模型：
+
+```bash
+cd agents/s01-minimum-loop
+
+# DeepSeek
+export DEEPSEEK_API_KEY=sk-...
+go run . -provider deepseek -v "list .go files"
+
+# Qwen / 通义千问
+export DASHSCOPE_API_KEY=sk-...
+go run . -provider qwen "周末天气如何？"
+
+# 自托管 vLLM/Ollama
+go run . -provider local -base-url http://localhost:8000/v1 -model my-llama "..."
+```
+
+8 个 profile 开箱即用：`anthropic` / `openai` / `deepseek` / `moonshot` / `qwen` / `groq` / `openrouter` / `local`。详见 [多模型接入指南](./docs/zh/multi-model.md)。
 
 ## 仓库结构 / Layout
 
