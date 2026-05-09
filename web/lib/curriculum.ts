@@ -100,7 +100,7 @@ export const CURRICULUM: ChapterMeta[] = [
       zh: "TurnState 状态机（完整 AgentLoop）",
       en: "TurnState state machine (full AgentLoop)",
     },
-    available: false,
+    available: true,
   },
   {
     slug: "s_full-integration",

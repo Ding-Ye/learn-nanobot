@@ -30,6 +30,7 @@ jobs:
           - s08-context-builder
           - s09-hooks
           - s10-consolidator-autocompact
+          - s11-turn-state-machine
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5

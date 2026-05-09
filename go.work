@@ -11,4 +11,5 @@ use (
 	./agents/s08-context-builder
 	./agents/s09-hooks
 	./agents/s10-consolidator-autocompact
+	./agents/s11-turn-state-machine
 )

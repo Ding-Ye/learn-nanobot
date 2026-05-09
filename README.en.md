@@ -30,7 +30,7 @@ Pedagogy borrowed from [shareAI-lab/learn-claude-code](https://github.com/shareA
 | s08 | [Context builder](./docs/en/s08-context-builder.md) | bootstrap files + history trim + RuntimeMeta | ✅ |
 | s09 | [Hook system](./docs/en/s09-hooks.md) | 5 lifecycle points + CompositeHook | ✅ |
 | s10 | [Consolidator + AutoCompact](./docs/en/s10-consolidator-autocompact.md) | LLM-summarize + TTL background compact | ✅ |
-| s11 | TurnState state machine | RESTORE→COMPACT→COMMAND→BUILD→RUN→SAVE→RESPOND→DONE | ⏳ |
+| s11 | [TurnState state machine](./docs/en/s11-turn-state-machine.md) | RESTORE→COMPACT→COMMAND→BUILD→RUN→SAVE→RESPOND→DONE | ✅ |
 | s_full | End-to-end integration | 16-step execution trace + deliberate-omissions table | ⏳ |
 | A | Appendix · Memory as interpretation | append-only → Dream → curated MEMORY.md | ⏳ |
 | B | Appendix · Upstream source-reading map | file→chapter map + 5 extension exercises | ⏳ |

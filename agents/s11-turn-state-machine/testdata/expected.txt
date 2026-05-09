@@ -1,0 +1,74 @@
+Same outward behavior as s10: ANTHROPIC_API_KEY in, agent reply out.
+The new externally-visible signal is the per-tick state-transition log
+(printed in -v mode). Slash commands (/help, /clear) short-circuit
+straight to RESPOND with no LLM call.
+
+$ go run . -workspace /tmp/agent-demo -v "Tokyo weather"
+[s11] bootstrap files present: 0/4 ([AGENTS.md SOUL.md USER.md TOOLS.md])
+[s11] loaded 2 skill(s) from workspace="/tmp/agent-demo/skills" builtin=".../testdata/skills"
+       - echo
+       - weather
+[s11] skills requested for system prompt: []
+[s11] autocompact TTL: 5m0s; compact budget: 0
+[s11] state: START -> RESTORE
+[s11] state: RESTORE -> COMPACT
+[s11] state: COMPACT -> COMMAND
+[s11] state: COMMAND -> BUILD
+[s11] state: BUILD -> RUN
+[iter 0] -> bash {command:curl -s wttr.in/Tokyo?format=3}
+[iter 0] <- Tokyo: ☀ +18°C
+[iter 0] assistant: ...
+[s11] state: RUN -> SAVE
+[s11] state: SAVE -> RESPOND
+[s11] state: RESPOND -> DONE
+[s11] hook recorded 1 tool invocation(s): [bash]
+[s11] terminal state: DONE
+Tokyo: clear, 18°C.
+
+The slash-command short-circuit (no LLM call):
+
+$ go run . -v /help
+[s11] state: START -> RESTORE
+[s11] state: RESTORE -> COMPACT
+[s11] state: COMPACT -> COMMAND
+[s11] state: COMMAND -> RESPOND
+[s11] state: RESPOND -> DONE
+[s11] terminal state: DONE
+Available commands:
+  /help    Show this help text.
+  /clear   Reset the current session's message history.
+
+The seven-state walk maps onto seven prior sessions plus two new states:
+
+  RESTORE  s05 (SessionManager) + s06 (MemoryStore)
+  COMPACT  s10 (Consolidator)
+  COMMAND  new — slash command short-circuit
+  BUILD    s06 + s07 (Skills) + s08 (ContextBuilder)
+  RUN      s04 (Runner) + s09 (Hook)
+  SAVE     s06 (MemoryStore.AppendHistory)
+  RESPOND  new — final string assembly
+
+Tests:
+
+$ go test -count=1 -race ./...
+ok      learn-nanobot/s11       3.5s
+
+Total: 21 tests in s11. New in this session:
+
+  loop_test.go (8 tests):
+    TestLoop_HappyPath_RestoreToDone
+    TestLoop_CompactState_TriggersConsolidator
+    TestLoop_CommandState_SlashHelp_ShortCircuits
+    TestLoop_RunState_ToolUseRoundTrip
+    TestLoop_SaveState_PersistsTurn
+    TestLoop_ErrorInBuild_TransitionsToError
+    TestLoop_ProcessIsIdempotentForSameSessionKey
+    TestLoop_NewLoopDefaults
+
+  state_test.go (4 tests):
+    TestTransitions_AllStatesReachableFromRestore
+    TestTransitions_NoTerminalStatesInTable
+    TestTurnState_String
+    TestTurnContext_AdvanceAndFail
+
+Plus 9 carry-over tests from s10's consolidator_test.go + autocompact_test.go.

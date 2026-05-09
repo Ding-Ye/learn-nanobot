@@ -81,6 +81,7 @@ function guessUpstreamFile(slug: string): string | null {
     "s08-context-builder": "s08-context-builder.py",
     "s09-hooks": "s09-hooks.py",
     "s10-consolidator-autocompact": "s10-consolidator-autocompact.py",
+    "s11-turn-state-machine": "s11-turn-state-machine.py",
   };
   return map[slug] ?? null;
 }
