@@ -28,7 +28,7 @@ Pedagogy borrowed from [shareAI-lab/learn-claude-code](https://github.com/shareA
 | s06 | [Memory store](./docs/en/s06-memory-store.md) | append-only jsonl + cursor + MEMORY/SOUL/USER.md | ✅ |
 | s07 | [Skills loader](./docs/en/s07-skills-loader.md) | YAML frontmatter + requires check | ✅ |
 | s08 | [Context builder](./docs/en/s08-context-builder.md) | bootstrap files + history trim + RuntimeMeta | ✅ |
-| s09 | Hook system | 5 lifecycle points + CompositeHook | ⏳ |
+| s09 | [Hook system](./docs/en/s09-hooks.md) | 5 lifecycle points + CompositeHook | ✅ |
 | s10 | Consolidator + AutoCompact | LLM-summarize + TTL background compact | ⏳ |
 | s11 | TurnState state machine | RESTORE→COMPACT→COMMAND→BUILD→RUN→SAVE→RESPOND→DONE | ⏳ |
 | s_full | End-to-end integration | 16-step execution trace + deliberate-omissions table | ⏳ |

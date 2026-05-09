@@ -28,7 +28,7 @@
 | s06 | [MemoryStore](./docs/zh/s06-memory-store.md) | append-only jsonl + cursor + MEMORY/SOUL/USER.md | ✅ |
 | s07 | [技能加载器](./docs/zh/s07-skills-loader.md) | YAML frontmatter + requires 检查 | ✅ |
 | s08 | [上下文构建器](./docs/zh/s08-context-builder.md) | Bootstrap 文件 + 历史裁剪 + RuntimeMeta | ✅ |
-| s09 | Hook 系统 | 5 个生命周期点 + CompositeHook | ⏳ |
+| s09 | [Hook 系统](./docs/zh/s09-hooks.md) | 5 个生命周期点 + CompositeHook | ✅ |
 | s10 | Consolidator + AutoCompact | LLM 摘要 + TTL 后台压缩 | ⏳ |
 | s11 | TurnState 状态机 | RESTORE→COMPACT→COMMAND→BUILD→RUN→SAVE→RESPOND→DONE | ⏳ |
 | s_full | 端到端集成 | 16 步执行轨迹 + 故意省略对照 | ⏳ |

@@ -82,7 +82,7 @@ export const CURRICULUM: ChapterMeta[] = [
     slug: "s09-hooks",
     num: "s09",
     title: { zh: "生命周期 Hook 系统", en: "Hook system" },
-    available: false,
+    available: true,
   },
   {
     slug: "s10-consolidator-autocompact",

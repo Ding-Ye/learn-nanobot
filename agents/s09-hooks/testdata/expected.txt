@@ -1,0 +1,55 @@
+Same outward behavior as s08: ANTHROPIC_API_KEY in, agent reply out.
+The only externally-visible change is the new `[s09] hook recorded ...`
+line printed after Run returns, summarizing what SDKCaptureHook captured.
+
+$ go run . -workspace /tmp/agent-demo -skills weather -v "Tokyo weather"
+[s09] bootstrap files present: 0/4 ([AGENTS.md SOUL.md USER.md TOOLS.md])
+[s09] loaded 2 skill(s) from workspace="/tmp/agent-demo/skills" builtin=".../testdata/skills"
+       - echo
+       - weather
+[s09] skills requested for system prompt: [weather]
+[s09] system prompt: 612 chars; messages: 1
+[iter 0] -> bash {command:curl -s wttr.in/Tokyo?format=3}
+[iter 0] <- Tokyo: ☀ +18°C
+[iter 0] assistant: ...
+[s09] hook recorded 1 tool invocation(s): [bash]
+Tokyo: clear, 18°C.
+
+The five hook tap points fire, in this order, per iteration:
+
+  BeforeIter(0)
+  (LLM call: returns tool_calls)
+  BeforeExecuteTools(0)
+  (bash runs)
+  AfterIter(0)
+  BeforeIter(1)
+  (LLM call: returns stop)
+  AfterIter(1)
+  FinalizeContent
+
+If a hook in CompositeHook panics:
+
+  CompositeHook recovers it, logs via LogPanic, then surfaces an error
+  to the Runner. Other registered hooks still run for the same call.
+
+If BeforeExecuteTools returns an error:
+
+  Runner bails mid-iteration. The tool body never runs. AfterIter still
+  fires so observability hooks see the failed iteration. The error is
+  wrapped and surfaced from Run.
+
+If FinalizeContent rewrites the content:
+
+  AgentRunResult.FinalContent is the rewritten string. The caller can't
+  tell from the result struct that a hook intervened — that's the whole
+  point.
+
+Tests:
+
+$ go test -count=1 -race ./...
+ok      learn-nanobot/s09       0.5s
+
+The 6 tests pin down: call order across a 2-turn loop, error-isolation
+in CompositeHook, SDKCaptureHook accumulation, FinalizeContent rewrite
+path, BeforeExecuteTools short-circuit, and the no-hook (default Noop)
+sanity check.

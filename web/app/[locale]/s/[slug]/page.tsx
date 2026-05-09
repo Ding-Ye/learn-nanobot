@@ -79,6 +79,7 @@ function guessUpstreamFile(slug: string): string | null {
     "s06-memory-store": "s06-memory-store.py",
     "s07-skills-loader": "s07-skills-loader.py",
     "s08-context-builder": "s08-context-builder.py",
+    "s09-hooks": "s09-hooks.py",
   };
   return map[slug] ?? null;
 }
