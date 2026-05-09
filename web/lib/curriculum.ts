@@ -40,7 +40,7 @@ export const CURRICULUM: ChapterMeta[] = [
     slug: "s03-provider-abstraction",
     num: "s03",
     title: { zh: "Provider 抽象层", en: "Provider abstraction" },
-    available: false,
+    available: true,
   },
   {
     slug: "s04-agent-runner",

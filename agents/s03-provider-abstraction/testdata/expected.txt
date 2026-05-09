@@ -1,0 +1,19 @@
+Same outward shape as s02. The diff is internal — the Loop reads
+LLMResponse.ToolCalls instead of walking ContentBlocks.
+
+$ go run . -v "list .go files"
+[s03] model=claude-sonnet-4-6 tools=1 max_turns=20
+[turn 0] assistant: I'll list the .go files.
+[turn 0] -> bash map[command:ls *.go]
+[turn 0] <- bash_tool.go loop.go main.go provider.go provider_anthropic.go provider_fake.go registry.go tools.go
+[turn 1] assistant: Eight .go files: ...
+Eight .go files: ...
+
+If your run errors with "provider error http_401" — your ANTHROPIC_API_KEY
+is wrong (s03 surfaces this distinctly thanks to the LLMResponse.Err* fields).
+
+If "provider error http_429: ... retryable=false" — your account hit a quota
+limit. Renew billing.
+
+If "provider error http_429: ... retryable=true" — temporary rate limit.
+s04 will add retry logic; for now just rerun.

@@ -22,6 +22,7 @@ jobs:
         session:
           - s01-minimum-loop
           - s02-tool-registry
+          - s03-provider-abstraction
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
