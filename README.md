@@ -21,7 +21,7 @@
 | # | 章节 | 教什么 | 状态 |
 |---|---|---|---|
 | s01 | [最小 agent loop](./docs/zh/s01-minimum-loop.md) | provider + 1 工具 + turn cap | ✅ |
-| s02 | 工具注册表 | `Registry` 缓存 + 排序 + register/unregister | ⏳ |
+| s02 | [工具注册表](./docs/zh/s02-tool-registry.md) | `Registry` 缓存 + 排序 + register/unregister | ✅ |
 | s03 | Provider 抽象层 | `LLMResponse` 规范化 + retry 分类 | ⏳ |
 | s04 | Agent runner | 内部工具循环切出来 | ⏳ |
 | s05 | Session 与 MessageBus | 每会话一个 goroutine | ⏳ |

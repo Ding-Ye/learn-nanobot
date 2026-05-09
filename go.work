@@ -2,4 +2,5 @@ go 1.23
 
 use (
 	./agents/s01-minimum-loop
+	./agents/s02-tool-registry
 )

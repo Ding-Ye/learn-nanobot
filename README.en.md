@@ -21,7 +21,7 @@ Pedagogy borrowed from [shareAI-lab/learn-claude-code](https://github.com/shareA
 | # | Chapter | Teaches | Status |
 |---|---|---|---|
 | s01 | [Minimum agent loop](./docs/en/s01-minimum-loop.md) | provider + 1 tool + turn cap | ✅ |
-| s02 | Tool registry | cached + sorted, register/unregister | ⏳ |
+| s02 | [Tool registry](./docs/en/s02-tool-registry.md) | cached + sorted, register/unregister | ✅ |
 | s03 | Provider abstraction | `LLMResponse` normalization + retry classification | ⏳ |
 | s04 | Agent runner | inner tool-loop carved out | ⏳ |
 | s05 | Session + MessageBus | one goroutine per session | ⏳ |

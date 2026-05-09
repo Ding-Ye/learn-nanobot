@@ -72,6 +72,7 @@ function guessUpstreamFile(slug: string): string | null {
   // Each session adds its row here when it lands during Phase E.
   const map: Record<string, string> = {
     "s01-minimum-loop": "s01-loop.py",
+    "s02-tool-registry": "s02-tool-registry.py",
   };
   return map[slug] ?? null;
 }

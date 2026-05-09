@@ -1,0 +1,14 @@
+Sample run shape — outwardly identical to s01.
+
+$ go run . -v "list .go files"
+[s02] model=claude-sonnet-4-6 tools=1 max_turns=20
+[turn 0] assistant: I'll list the .go files.
+[turn 0] -> bash map[command:ls *.go]
+[turn 0] <- bash_tool.go loop.go main.go provider.go registry.go tools.go
+[turn 1] assistant: Six .go files: bash_tool.go, loop.go, main.go, provider.go, registry.go, tools.go.
+Six .go files: bash_tool.go, loop.go, main.go, provider.go, registry.go, tools.go.
+
+If you compare this with s01's expected.txt, the OUTPUT is identical except for
+the file count (s02 has more files because we split tools.go into two). The
+behavioral diff is internal — Registry caches schemas, sorts them stably, and
+will keep doing so as we add MCP tools (mcp_*) in later sessions.
