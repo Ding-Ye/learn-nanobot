@@ -55,7 +55,7 @@ export const CURRICULUM: ChapterMeta[] = [
     slug: "s05-session-bus",
     num: "s05",
     title: { zh: "Session 与 MessageBus", en: "Session + MessageBus" },
-    available: false,
+    available: true,
   },
   {
     slug: "s06-memory-store",

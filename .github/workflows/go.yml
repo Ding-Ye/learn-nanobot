@@ -24,6 +24,7 @@ jobs:
           - s02-tool-registry
           - s03-provider-abstraction
           - s04-agent-runner
+          - s05-session-bus
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5

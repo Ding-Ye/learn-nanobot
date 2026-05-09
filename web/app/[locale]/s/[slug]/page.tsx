@@ -75,6 +75,7 @@ function guessUpstreamFile(slug: string): string | null {
     "s02-tool-registry": "s02-tool-registry.py",
     "s03-provider-abstraction": "s03-provider-abstraction.py",
     "s04-agent-runner": "s04-agent-runner.py",
+    "s05-session-bus": "s05-session-bus.py",
   };
   return map[slug] ?? null;
 }

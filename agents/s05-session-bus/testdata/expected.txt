@@ -1,0 +1,30 @@
+Same outward behavior as s04 from the user's perspective. The diff is
+structural: there's now a Bus + SessionManager between main and the
+Runner. The CLI driver sends one InboundMessage under -session
+"cli:direct" (default) and prints the first OutboundMessage it reads.
+Run twice with the same -session within a single process invocation
+keeps history; across processes there is no persistence yet (s06 wires
+that with MemoryStore).
+
+$ go run . -session demo "list .go files in this directory"
+bash_tool.go bus.go main.go provider.go provider_anthropic.go provider_fake.go registry.go runner.go session.go tools.go
+
+If your run errors with "iteration 0: provider error http_401" — your
+ANTHROPIC_API_KEY is wrong. Same Runner-level error message as s04,
+just now wrapped inside an OutboundMessage.Err.
+
+If "iteration N: provider error http_429: ... retryable=true" — temporary
+rate limit. The Runner does NOT retry yet; s09 will add a retry strategy.
+
+If "bus: stopped, dropping message ..." — you called Send after Stop.
+The CLI never does this; tests do.
+
+Concurrent behavior to verify by hand:
+
+$ go test -count=1 -race -run TestBus_TwoSessions_Parallel ./...
+PASS — wall clock < 180ms because the two session goroutines run in
+parallel (each FakeProvider sleeps 100ms).
+
+$ go test -count=1 -race -run TestBus_SameSession_Serial ./...
+PASS — the three replies come back with CorrelationIDs msg-1, msg-2,
+msg-3 in that order, no matter how the goroutine is scheduled.
