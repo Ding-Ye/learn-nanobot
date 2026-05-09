@@ -1,0 +1,61 @@
+Same outward behavior as s06 from the user's perspective. The diff is what
+the SkillLoader prints in verbose mode and what it would feed into s08's
+ContextBuilder once that lands.
+
+$ go run . -workspace /tmp/agent-demo -session demo -v "list .go files"
+[s07] loaded 2 skill(s) from workspace="/tmp/agent-demo/skills" builtin=".../testdata/skills"
+       - echo (ok) — Echo a string back as-is
+       - weather (ok) — Get current weather for a city
+bash_tool.go bus.go main.go memory.go provider.go provider_anthropic.go provider_fake.go registry.go runner.go session.go skills.go tools.go
+
+$ ls /tmp/agent-demo
+.cursor
+history.jsonl
+
+The skills directory is loaded by SkillLoader; the memory files are written
+by MemoryStore. Two completely independent concerns sharing one workspace.
+
+If `curl` is uninstalled (rare on macOS/Linux), the weather skill flips to
+unavailable:
+       - weather (unavailable: CLI: curl) — Get current weather for a city
+
+If you author a workspace skill with the same name as a builtin, the
+workspace version wins:
+
+$ mkdir -p /tmp/agent-demo/skills/weather
+$ cat > /tmp/agent-demo/skills/weather/SKILL.md <<'EOF'
+---
+name: weather
+description: my custom weather skill (paid API)
+requires:
+  bins: [curl]
+---
+Use my paid endpoint at https://my-weather.example.com.
+EOF
+
+$ go run . -workspace /tmp/agent-demo -v "test"
+[s07] loaded 2 skill(s) ...
+       - echo (ok) — Echo a string back as-is
+       - weather (ok) — my custom weather skill (paid API)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^
+                                workspace override visible
+
+If you mark a skill `enabled: false`, it disappears from List() entirely.
+If you pass -disabled-skills weather, it disappears the same way (different
+mechanism, same effect — config vs. content).
+
+If you write a malformed SKILL.md (bad YAML), it's silently skipped:
+the loader's invariant is "one bad skill never breaks the whole pipeline".
+The error is dropped, not propagated — log/warn pathway is left to s08.
+
+Concurrent behavior:
+
+$ go test -count=1 -race ./...
+ok      learn-nanobot/s07       1.4s
+
+The 7 tests cover frontmatter parse, malformed-skip, missing-bin filter,
+LoadForContext concatenation, disabled list, workspace-overrides-builtin,
+and enabled:false opt-out. Run with -race; no goroutines start in the
+loader (it's pure file I/O), so the race detector mostly verifies that
+the surrounding scaffolding (Bus/SessionManager/MemoryStore) still passes
+its s06 invariants.

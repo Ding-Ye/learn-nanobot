@@ -26,7 +26,7 @@ Pedagogy borrowed from [shareAI-lab/learn-claude-code](https://github.com/shareA
 | s04 | [Agent runner](./docs/en/s04-agent-runner.md) | inner tool-loop carved out | ✅ |
 | s05 | [Session + MessageBus](./docs/en/s05-session-bus.md) | one goroutine per session | ✅ |
 | s06 | [Memory store](./docs/en/s06-memory-store.md) | append-only jsonl + cursor + MEMORY/SOUL/USER.md | ✅ |
-| s07 | Skills loader | YAML frontmatter + requires check | ⏳ |
+| s07 | [Skills loader](./docs/en/s07-skills-loader.md) | YAML frontmatter + requires check | ✅ |
 | s08 | Context builder | bootstrap files + history trim + RuntimeMeta | ⏳ |
 | s09 | Hook system | 5 lifecycle points + CompositeHook | ⏳ |
 | s10 | Consolidator + AutoCompact | LLM-summarize + TTL background compact | ⏳ |

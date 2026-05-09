@@ -70,7 +70,7 @@ export const CURRICULUM: ChapterMeta[] = [
     slug: "s07-skills-loader",
     num: "s07",
     title: { zh: "技能加载器", en: "Skills loader" },
-    available: false,
+    available: true,
   },
   {
     slug: "s08-context-builder",

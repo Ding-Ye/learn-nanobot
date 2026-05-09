@@ -26,6 +26,7 @@ jobs:
           - s04-agent-runner
           - s05-session-bus
           - s06-memory-store
+          - s07-skills-loader
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
