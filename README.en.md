@@ -25,7 +25,7 @@ Pedagogy borrowed from [shareAI-lab/learn-claude-code](https://github.com/shareA
 | s03 | [Provider abstraction](./docs/en/s03-provider-abstraction.md) | `LLMResponse` normalization + retry classification | ✅ |
 | s04 | [Agent runner](./docs/en/s04-agent-runner.md) | inner tool-loop carved out | ✅ |
 | s05 | [Session + MessageBus](./docs/en/s05-session-bus.md) | one goroutine per session | ✅ |
-| s06 | Memory store | append-only jsonl + cursor + MEMORY/SOUL/USER.md | ⏳ |
+| s06 | [Memory store](./docs/en/s06-memory-store.md) | append-only jsonl + cursor + MEMORY/SOUL/USER.md | ✅ |
 | s07 | Skills loader | YAML frontmatter + requires check | ⏳ |
 | s08 | Context builder | bootstrap files + history trim + RuntimeMeta | ⏳ |
 | s09 | Hook system | 5 lifecycle points + CompositeHook | ⏳ |

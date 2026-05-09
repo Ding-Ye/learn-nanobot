@@ -6,4 +6,5 @@ use (
 	./agents/s03-provider-abstraction
 	./agents/s04-agent-runner
 	./agents/s05-session-bus
+	./agents/s06-memory-store
 )

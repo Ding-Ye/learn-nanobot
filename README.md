@@ -25,7 +25,7 @@
 | s03 | [Provider 抽象层](./docs/zh/s03-provider-abstraction.md) | `LLMResponse` 规范化 + retry 分类 | ✅ |
 | s04 | [Agent runner](./docs/zh/s04-agent-runner.md) | 内部工具循环切出来 | ✅ |
 | s05 | [Session 与 MessageBus](./docs/zh/s05-session-bus.md) | 每会话一个 goroutine | ✅ |
-| s06 | MemoryStore | append-only jsonl + cursor + MEMORY/SOUL/USER.md | ⏳ |
+| s06 | [MemoryStore](./docs/zh/s06-memory-store.md) | append-only jsonl + cursor + MEMORY/SOUL/USER.md | ✅ |
 | s07 | 技能加载器 | YAML frontmatter + requires 检查 | ⏳ |
 | s08 | 上下文构建器 | Bootstrap 文件 + 历史裁剪 + RuntimeMeta | ⏳ |
 | s09 | Hook 系统 | 5 个生命周期点 + CompositeHook | ⏳ |

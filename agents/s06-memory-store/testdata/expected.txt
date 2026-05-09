@@ -1,0 +1,49 @@
+Same outward behavior as s05 from the user's perspective. The diff is on
+disk: there's now a `<workspace>/` directory (default
+`~/.learn-nanobot/agents/default/`) with two files after one turn, and
+optional Markdown files for curated memory.
+
+$ go run . -workspace /tmp/agent-demo -session demo "list .go files in this directory"
+bash_tool.go bus.go main.go memory.go provider.go provider_anthropic.go provider_fake.go registry.go runner.go session.go tools.go
+
+$ ls /tmp/agent-demo
+.cursor
+history.jsonl
+
+$ cat /tmp/agent-demo/.cursor
+2
+
+$ wc -l /tmp/agent-demo/history.jsonl
+2 history.jsonl
+
+$ head -1 /tmp/agent-demo/history.jsonl | python3 -m json.tool
+{
+    "ts": "2026-05-09T...",
+    "role": "user",
+    "content": "list .go files in this directory"
+}
+
+The cursor is 2 because main appends two HistoryEntry rows per turn:
+the user prompt and the assistant's final reply. The assistant row also
+carries `tools_used` and `usage` if the LLM called tools.
+
+If you re-run with the same -workspace, history.jsonl grows by 2 lines
+each turn and .cursor advances accordingly. MEMORY.md / SOUL.md / USER.md
+remain absent until s10's Consolidator (or App. A's Dream) writes them.
+
+If your run errors with "iteration 0: provider error http_401" — your
+ANTHROPIC_API_KEY is wrong. Same Runner-level error message as s05.
+
+If "workspace: …": -workspace is invalid. Default is
+~/.learn-nanobot/agents/default; pass an absolute path to override.
+
+If history.jsonl already exists from a previous run, AppendHistory just
+adds to the bottom and writes the new line count to .cursor. There is no
+"erase" path in MemoryStore — the only mutation surface is AppendHistory
+plus the three atomic-replace WriteMemory variants.
+
+Concurrent behavior:
+
+$ go test -count=1 -race -run TestMemoryStore_AppendHistory_Concurrent_ConsistentLines ./...
+PASS — 10 goroutines append concurrently; final history.jsonl has exactly
+10 lines and every line parses as JSON.

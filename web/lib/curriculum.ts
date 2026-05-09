@@ -64,7 +64,7 @@ export const CURRICULUM: ChapterMeta[] = [
       zh: "MemoryStore（文件读写）",
       en: "Memory store (file I/O)",
     },
-    available: false,
+    available: true,
   },
   {
     slug: "s07-skills-loader",
