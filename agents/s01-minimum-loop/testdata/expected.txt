@@ -1,0 +1,12 @@
+Sample run shape (LLM output is non-deterministic — match the SHAPE, not bytes).
+
+$ go run . -v "list the .go files in this directory"
+[s01] model=claude-sonnet-4-6 max_turns=20
+[turn 0] assistant: I'll use bash to list the .go files.
+[turn 0] -> bash map[command:ls *.go]
+[turn 0] <- loop.go main.go provider.go tools.go ...
+[turn 1] assistant: Found four .go files: loop.go, main.go, provider.go, tools.go.
+Found four .go files: loop.go, main.go, provider.go, tools.go.
+
+If your run errored at turn 0 with "401" — your ANTHROPIC_API_KEY is invalid.
+If you see "MaxTurns=20 without end_turn" — the model is stuck calling tools; bump -max-turns or check the prompt.

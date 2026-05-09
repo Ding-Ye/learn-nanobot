@@ -1,0 +1,38 @@
+# Local state from learn-repo-generator
+.learn/
+
+# macOS
+.DS_Store
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Per-session compiled binaries.
+# Module path is `learn-nanobot/sNN`, so `go build ./...` produces a binary
+# named `sNN` inside the session directory. Ignore those, but never ignore
+# .go, _test.go, or .md files in the session dirs.
+agents/*/s[0-9][0-9]
+agents/*/s_full
+
+# Web (Next.js)
+web/node_modules/
+web/.next/
+web/out/
+web/.turbo/
+web/next-env.d.ts
+
+# Dependency caches
+*.tgz
+.pnpm-store/
+
+# OS / tools
+.envrc
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
