@@ -76,7 +76,7 @@ export const CURRICULUM: ChapterMeta[] = [
     slug: "s08-context-builder",
     num: "s08",
     title: { zh: "上下文构建器", en: "Context builder" },
-    available: false,
+    available: true,
   },
   {
     slug: "s09-hooks",

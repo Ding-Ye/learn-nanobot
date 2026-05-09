@@ -8,4 +8,5 @@ use (
 	./agents/s05-session-bus
 	./agents/s06-memory-store
 	./agents/s07-skills-loader
+	./agents/s08-context-builder
 )

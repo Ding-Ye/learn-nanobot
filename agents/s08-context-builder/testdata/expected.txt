@@ -1,0 +1,55 @@
+Same outward behavior as s07: ANTHROPIC_API_KEY in, agent reply out.
+The diff is internal: the system prompt is now non-empty.
+
+$ go run . -workspace /tmp/agent-demo -skills weather,echo -v "test"
+[s08] bootstrap files present: 0/4 ([AGENTS.md SOUL.md USER.md TOOLS.md])
+[s08] loaded 2 skill(s) from workspace="/tmp/agent-demo/skills" builtin=".../testdata/skills"
+       - echo
+       - weather
+[s08] skills requested for system prompt: [weather echo]
+[s08] system prompt: 612 chars; messages: 1
+...
+
+Adding a SOUL.md flips the bootstrap count and grows the system prompt:
+
+$ cat > /tmp/agent-demo/SOUL.md <<'EOF'
+You are a terse weather-savvy assistant. Always respond in 2 lines or less.
+EOF
+
+$ go run . -workspace /tmp/agent-demo -skills weather -v "Tokyo"
+[s08] bootstrap files present: 1/4 ([AGENTS.md SOUL.md USER.md TOOLS.md])
+[s08] loaded 2 skill(s) ...
+[s08] skills requested for system prompt: [weather]
+[s08] system prompt: 893 chars; messages: 1
+...
+
+The system prompt grows from 612 → 893 chars because the SOUL.md content
+plus its `## SOUL.md` header now sit in front of the Skills + Runtime
+sections.
+
+The runtime block always closes the system prompt:
+
+   ...
+   ---
+   [Runtime Context — metadata only]
+   Current Time: 2026-05-09T14:35:01Z
+   Channel: cli
+   Sender: yeding
+   [/Runtime Context]
+
+If you stuff the user input with `<think>` blocks, they're stripped
+at the single sanitize boundary in BuildMessages — the Anthropic API
+will only see the visible text:
+
+$ go run . -workspace /tmp/agent-demo "<think>secret</think>visible"
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^
+                                       stripped before reaching the LLM
+
+Concurrent behavior:
+
+$ go test -count=1 -race ./...
+ok      learn-nanobot/s08       0.5s
+
+The 7 tests pin down: bootstrap-file inclusion, runtime block presence,
+message-count trim, sanitize correctness on user + history text, no-skills
+path, token-budget trim, and sanitize idempotence.

@@ -27,6 +27,7 @@ jobs:
           - s05-session-bus
           - s06-memory-store
           - s07-skills-loader
+          - s08-context-builder
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
