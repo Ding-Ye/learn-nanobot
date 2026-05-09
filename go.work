@@ -10,4 +10,5 @@ use (
 	./agents/s07-skills-loader
 	./agents/s08-context-builder
 	./agents/s09-hooks
+	./agents/s10-consolidator-autocompact
 )

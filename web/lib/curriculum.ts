@@ -91,7 +91,7 @@ export const CURRICULUM: ChapterMeta[] = [
       zh: "Consolidator 与 AutoCompact",
       en: "Consolidator + AutoCompact",
     },
-    available: false,
+    available: true,
   },
   {
     slug: "s11-turn-state-machine",

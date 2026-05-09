@@ -80,6 +80,7 @@ function guessUpstreamFile(slug: string): string | null {
     "s07-skills-loader": "s07-skills-loader.py",
     "s08-context-builder": "s08-context-builder.py",
     "s09-hooks": "s09-hooks.py",
+    "s10-consolidator-autocompact": "s10-consolidator-autocompact.py",
   };
   return map[slug] ?? null;
 }

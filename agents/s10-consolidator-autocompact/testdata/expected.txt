@@ -1,0 +1,41 @@
+Same outward behavior as s09: ANTHROPIC_API_KEY in, agent reply out.
+The new externally-visible signal is `[s10] autocompact TTL: ...` (printed
+in -v mode) and, if the AutoCompact goroutine fired during this turn,
+`[s10] autocompact summary: ...`.
+
+$ go run . -workspace /tmp/agent-demo -autocompact-ttl 1m -v "Tokyo weather"
+[s10] bootstrap files present: 0/4 ([AGENTS.md SOUL.md USER.md TOOLS.md])
+[s10] loaded 2 skill(s) from workspace="/tmp/agent-demo/skills" builtin=".../testdata/skills"
+       - echo
+       - weather
+[s10] skills requested for system prompt: []
+[s10] autocompact TTL: 1m0s
+[s10] system prompt: 612 chars; messages: 1
+[iter 0] -> bash {command:curl -s wttr.in/Tokyo?format=3}
+[iter 0] <- Tokyo: ☀ +18°C
+[iter 0] assistant: ...
+[s10] hook recorded 1 tool invocation(s): [bash]
+Tokyo: clear, 18°C.
+
+The Consolidator's job is not exercised by a single-turn CLI run. To see
+it work end-to-end, build a session that's been idle for 100ms+, then
+call CheckExpired with an empty active-keys map. The unit tests do
+exactly this:
+
+  TestAutoCompact_IdleSession_GetsCompacted    — happy path
+  TestAutoCompact_ActiveSession_Skipped         — sacred-active-key invariant
+  TestAutoCompact_AlreadyArchiving_Skipped      — idempotency
+
+The Consolidator picks the boundary, calls FakeProvider for a one-line
+summary, writes /tmp/agent-demo/cli_idle-summary.md, and advances
+session.LastConsolidated to the chosen boundary.End.
+
+Tests:
+
+$ go test -count=1 -race ./...
+ok      learn-nanobot/s10       0.6s
+
+Total: 9 tests covering boundary picking, summary persistence, cursor
+advancement, ErrNoLegalBoundary, AutoCompact happy path, active-session
+skip, in-flight idempotency, Run-loop ctx-cancel, and the
+tool_result-not-a-boundary invariant.
