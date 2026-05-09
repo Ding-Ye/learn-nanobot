@@ -1,0 +1,29 @@
+Same outward behavior as s03. The diff is structural — the Runner takes
+a structured AgentRunSpec and returns a structured AgentRunResult instead
+of a bare string. Verbose mode now also prints tools_used + token usage
+to stderr at the end.
+
+$ go run . -v "list .go files"
+[s04] model=claude-sonnet-4-6 tools=1 max_iterations=20
+[iter 0] assistant: I'll list the .go files.
+[iter 0] -> bash map[command:ls *.go]
+[iter 0] <- bash_tool.go main.go provider.go provider_anthropic.go provider_fake.go registry.go runner.go tools.go
+[iter 1] assistant: Eight .go files: ...
+Eight .go files: ...
+[s04] tools_used=[bash] input_tokens=1523 output_tokens=84 finish=stop
+
+If your run errors with "iteration 0: provider error http_401" — your
+ANTHROPIC_API_KEY is wrong. The Runner surfaces provider error messages
+distinctly thanks to LLMResponse.Err* fields propagated from s03.
+
+If "iteration N: provider error http_429: ... retryable=true" — temporary
+rate limit. The Runner does NOT retry yet; s09 (hooks) will add a retry
+strategy. For now just rerun.
+
+If "runner: max iterations (N) exceeded without stop" — the model kept
+calling tools forever. Try -max-turns with a higher cap, or audit the
+prompt for ambiguity.
+
+If "iteration N: response truncated and no length recoveries left" — the
+model returned FinishReason="length" twice in a row. Raise max_tokens on
+the provider, or break the prompt into smaller pieces.

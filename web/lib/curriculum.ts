@@ -49,7 +49,7 @@ export const CURRICULUM: ChapterMeta[] = [
       zh: "Agent runner（内部工具循环）",
       en: "Agent runner (inner tool-loop)",
     },
-    available: false,
+    available: true,
   },
   {
     slug: "s05-session-bus",
